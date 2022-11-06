@@ -6,51 +6,51 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ro.tuc.ds2020.Ds2020TestConfig;
-import ro.tuc.ds2020.dtos.PersonDetailsDTO;
-import ro.tuc.ds2020.services.PersonService;
+import ro.tuc.ds2020.dtos.UserDetailsDTO;
+import ro.tuc.ds2020.services.UserService;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-public class PersonControllerUnitTest extends Ds2020TestConfig {
+public class UserControllerUnitTest extends Ds2020TestConfig {
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private PersonService service;
+    private UserService service;
 
     @Test
-    public void insertPersonTest() throws Exception {
+    public void insertUserTest() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        PersonDetailsDTO personDTO = new PersonDetailsDTO("John", "Somewhere Else street", 22);
+        UserDetailsDTO userDTO = new UserDetailsDTO("John", "Somewhere Else street", 22, "email", "parola");
 
         //face un fel de post, si specificam ca e json si la ce ne asteptam sa primim
-        mockMvc.perform(post("/person")
-                .content(objectMapper.writeValueAsString(personDTO))
+        mockMvc.perform(post("/user")
+                .content(objectMapper.writeValueAsString(userDTO))
                 .contentType("application/json"))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    public void insertPersonTestFailsDueToAge() throws Exception {
+    public void insertUserTestFailsDueToAge() throws Exception {
         //aici testeaza daca da fail din vina varstei sub 18 ani
         ObjectMapper objectMapper = new ObjectMapper();
-        PersonDetailsDTO personDTO = new PersonDetailsDTO("John", "Somewhere Else street", 17);
+        UserDetailsDTO personDTO = new UserDetailsDTO("John", "Somewhere Else street", 17, "email","parola");
 
-        mockMvc.perform(post("/person")
+        mockMvc.perform(post("/user")
                 .content(objectMapper.writeValueAsString(personDTO))
                 .contentType("application/json"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void insertPersonTestFailsDueToNull() throws Exception {
+    public void insertUserTestFailsDueToNull() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        PersonDetailsDTO personDTO = new PersonDetailsDTO("John", null, 17);
+        UserDetailsDTO userDTO = new UserDetailsDTO("John", null, 17, "email", "parola");
 
-        mockMvc.perform(post("/person")
-                .content(objectMapper.writeValueAsString(personDTO))
+        mockMvc.perform(post("/user")
+                .content(objectMapper.writeValueAsString(userDTO))
                 .contentType("application/json"))
                 .andExpect(status().isBadRequest());
     }

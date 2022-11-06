@@ -7,18 +7,22 @@ import java.util.UUID;
 
 // details inseamna cu adresa in plus?
 // nu stiu exact ce extinde, logica din baza de date?
-public class PersonDTO extends RepresentationModel<PersonDTO> {
+public class UserDTO extends RepresentationModel<UserDTO> {
     private UUID id;
     private String name;
     private int age;
+    private String address;
+    private String email;
 
-    public PersonDTO() {
+    public UserDTO() {
     }
 
-    public PersonDTO(UUID id, String name, int age) {
+    public UserDTO(UUID id, String name, int age, String address, String email) {
         this.id = id;
         this.name = name;
         this.age = age;
+        this.address = address;
+        this.email = email;
     }
 
     public UUID getId() {
@@ -45,17 +49,36 @@ public class PersonDTO extends RepresentationModel<PersonDTO> {
         this.age = age;
     }
 
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PersonDTO personDTO = (PersonDTO) o;
-        return age == personDTO.age &&
-                Objects.equals(name, personDTO.name);
+        UserDTO userDTO = (UserDTO) o;
+        return age == userDTO.age &&
+                Objects.equals(name, userDTO.name) &&
+                Objects.equals(address, userDTO.address) &&
+                Objects.equals(email, userDTO.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, age);
+        return Objects.hash(name, age, address, email);
     }
 }

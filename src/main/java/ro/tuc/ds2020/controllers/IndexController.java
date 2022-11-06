@@ -12,6 +12,6 @@ public class IndexController {
     //asta este path-ul initial
     @GetMapping(value = "/")
     public ResponseEntity<String> getStatus() {
-        return new ResponseEntity<>("City APP Service is running...", HttpStatus.OK);
+        return new ResponseEntity<>("Energy Consumption APP Service is running...", HttpStatus.OK);
     }
 }
