@@ -23,6 +23,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     List<User> findByEmail(String email);
 
     //List<User> findByAddress(String address);
+    Optional<User> findByEmailAndPassword(String email, String password);
 
     /**
      * Example: Write Custom Query

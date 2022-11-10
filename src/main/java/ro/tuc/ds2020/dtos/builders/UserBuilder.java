@@ -12,12 +12,12 @@ public class UserBuilder {
     // din entity Person in PersonDTO, cele 3 campuri fara adresa
     // e static
     public static UserDTO toUserDTO(User user) {
-        return new UserDTO(user.getId(), user.getName(), user.getAge(), user.getAddress(), user.getEmail());
+        return new UserDTO(user.getId(), user.getName(), user.getAge(), user.getAddress(), user.getEmail(), user.getRole());
     }
 
     // din Person in PersonDetailsDTO
     public static UserDetailsDTO toUserDetailsDTO(User user) {
-        return new UserDetailsDTO(user.getId(), user.getName(), user.getAddress(), user.getAge(), user.getEmail(), user.getPassword());
+        return new UserDetailsDTO(user.getId(), user.getName(), user.getAddress(), user.getAge(), user.getEmail(), user.getPassword(), user.getRole());
     }
 
     // din details in entity, in Person
@@ -27,6 +27,7 @@ public class UserBuilder {
                 userDetailsDTO.getAddress(),
                 userDetailsDTO.getAge(),
                 userDetailsDTO.getEmail(),
-                userDetailsDTO.getPassword());
+                userDetailsDTO.getPassword(),
+                userDetailsDTO.getRole());
     }
 }

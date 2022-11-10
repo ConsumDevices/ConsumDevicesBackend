@@ -13,16 +13,18 @@ public class UserDTO extends RepresentationModel<UserDTO> {
     private int age;
     private String address;
     private String email;
+    private String role;
 
     public UserDTO() {
     }
 
-    public UserDTO(UUID id, String name, int age, String address, String email) {
+    public UserDTO(UUID id, String name, int age, String address, String email, String role) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.address = address;
         this.email = email;
+        this.role = role;
     }
 
     public UUID getId() {
@@ -66,6 +68,14 @@ public class UserDTO extends RepresentationModel<UserDTO> {
         this.email = email;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -74,11 +84,12 @@ public class UserDTO extends RepresentationModel<UserDTO> {
         return age == userDTO.age &&
                 Objects.equals(name, userDTO.name) &&
                 Objects.equals(address, userDTO.address) &&
-                Objects.equals(email, userDTO.email);
+                Objects.equals(email, userDTO.email) &&
+                Objects.equals(role, userDTO.role);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, age, address, email);
+        return Objects.hash(name, age, address, email, role);
     }
 }

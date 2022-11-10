@@ -23,7 +23,7 @@ public class UserControllerUnitTest extends Ds2020TestConfig {
     @Test
     public void insertUserTest() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        UserDetailsDTO userDTO = new UserDetailsDTO("John", "Somewhere Else street", 22, "email", "parola");
+        UserDetailsDTO userDTO = new UserDetailsDTO("John", "Somewhere Else street", 22, "email", "parola", "role");
 
         //face un fel de post, si specificam ca e json si la ce ne asteptam sa primim
         mockMvc.perform(post("/user")
@@ -36,7 +36,7 @@ public class UserControllerUnitTest extends Ds2020TestConfig {
     public void insertUserTestFailsDueToAge() throws Exception {
         //aici testeaza daca da fail din vina varstei sub 18 ani
         ObjectMapper objectMapper = new ObjectMapper();
-        UserDetailsDTO personDTO = new UserDetailsDTO("John", "Somewhere Else street", 17, "email","parola");
+        UserDetailsDTO personDTO = new UserDetailsDTO("John", "Somewhere Else street", 17, "email","parola", "role");
 
         mockMvc.perform(post("/user")
                 .content(objectMapper.writeValueAsString(personDTO))
@@ -47,7 +47,7 @@ public class UserControllerUnitTest extends Ds2020TestConfig {
     @Test
     public void insertUserTestFailsDueToNull() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        UserDetailsDTO userDTO = new UserDetailsDTO("John", null, 17, "email", "parola");
+        UserDetailsDTO userDTO = new UserDetailsDTO("John", null, 17, "email", "parola", "role");
 
         mockMvc.perform(post("/user")
                 .content(objectMapper.writeValueAsString(userDTO))

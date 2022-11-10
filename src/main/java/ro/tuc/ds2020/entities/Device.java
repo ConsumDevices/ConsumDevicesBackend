@@ -31,6 +31,10 @@ public class Device implements Serializable{
     @Column(name = "maxHourlyConsumption", nullable = false)
     private float maxHourlyConsumption;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 
     public Device() {
     }
@@ -80,5 +84,13 @@ public class Device implements Serializable{
 
     public void setMaxHourlyConsumption(float maxHourlyConsumption) {
         this.maxHourlyConsumption = maxHourlyConsumption;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

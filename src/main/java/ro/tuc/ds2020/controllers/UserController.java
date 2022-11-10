@@ -8,11 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ro.tuc.ds2020.dtos.UserDTO;
 import ro.tuc.ds2020.dtos.UserDetailsDTO;
+import ro.tuc.ds2020.dtos.UserLoginDTO;
 import ro.tuc.ds2020.services.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
+
+import com.google.gson.Gson;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -23,10 +26,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserController {
 
     private final UserService userService;
+    private static final Gson gson = new Gson();
+    private static UserDetailsDTO userLogat = new UserDetailsDTO();
 
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+        userLogat.setRole("nelogat");
     }
 
     @GetMapping()
@@ -41,6 +47,27 @@ public class UserController {
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
+    @GetMapping(value="/role")
+    public ResponseEntity<String> getRole() {
+        //lista de persoane dto, apeleaza o functie din service
+        String userRole = userLogat.getRole();
+        System.out.println("Rolul actual: " + userRole);
+        return new ResponseEntity<>(gson.toJson(userRole), HttpStatus.OK);
+    }
+
+    @GetMapping(value="/roleLogout")
+    public ResponseEntity<String> getRoleLogout() {
+        //lista de persoane dto, apeleaza o functie din service
+        userLogat.setRole("neLogat");
+        userLogat.setName("Nelogat");
+        userLogat.setEmail("emailNelogat@email.com");
+        userLogat.setPassword("pasNel1-");
+        userLogat.setAddress("addressNelogat");
+        userLogat.setAge(99);
+        String userRole = userLogat.getRole();
+        return new ResponseEntity<>(gson.toJson(userRole), HttpStatus.OK);
+    }
+
     // primeste un personDTO, ii da insert, insert aparent ii returneaza UUID-ul
     @PostMapping()
     public ResponseEntity<UUID> insertUser(@Valid @RequestBody UserDetailsDTO userDTO) {
@@ -48,11 +75,23 @@ public class UserController {
         return new ResponseEntity<>(userID, HttpStatus.CREATED);
     }
 
+    @PostMapping(value="/login")
+    public ResponseEntity<String> loginUser(@Valid @RequestBody UserLoginDTO userDTO) {
+        UserDetailsDTO userDetailsDTO = userService.findByEmailAndPassword(userDTO.getEmail(), userDTO.getPassword());
+        String userRole = userDetailsDTO.getRole();
+        System.out.println(userRole);
+
+        userLogat = userDetailsDTO;
+        return new ResponseEntity<>(gson.toJson(userRole), HttpStatus.CREATED);
+    }
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<UserDetailsDTO> getUser(@PathVariable("id") UUID userId) {
         UserDetailsDTO dto = userService.findUserById(userId);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
+
+
 
     //TODO: UPDATE, DELETE per resource
 

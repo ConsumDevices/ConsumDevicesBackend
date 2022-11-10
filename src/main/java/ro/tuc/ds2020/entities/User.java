@@ -6,6 +6,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import javax.persistence.Entity;
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -13,7 +14,6 @@ public class User implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
-    //id-ul se genereaza automat aici aparent?
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -35,16 +35,23 @@ public class User implements Serializable{
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "role", nullable = false)
+    private String role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Device> devices;
+
 
     public User() {
     }
 
-    public User(String name, String address, int age, String email, String password) {
+    public User(String name, String address, int age, String email, String password, String role) {
         this.name = name;
         this.address = address;
         this.age = age;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     public UUID getId() {
@@ -93,5 +100,21 @@ public class User implements Serializable{
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public List<Device> getDevices() {
+        return devices;
+    }
+
+    public void setDevices(List<Device> devices) {
+        this.devices = devices;
     }
 }

@@ -28,11 +28,11 @@ public class UserServiceIntegrationTests extends Ds2020TestConfig {
     @Test
     public void testInsertCorrectWithGetById() {
         //insereaza o persoana si ii luam id-ul
-        UserDetailsDTO u = new UserDetailsDTO("John", "Somewhere Else street", 22, "email", "parola");
+        UserDetailsDTO u = new UserDetailsDTO("John", "Somewhere Else street", 22, "email", "parola", "role");
         UUID insertedID = userService.insert(u);
 
         //vrem ca ce am inserat sa il gasim in BD si sa fie egale
-        UserDetailsDTO insertedUser = new UserDetailsDTO(insertedID, u.getName(),u.getAddress(), u.getAge(), u.getEmail(), u.getPassword());
+        UserDetailsDTO insertedUser = new UserDetailsDTO(insertedID, u.getName(),u.getAddress(), u.getAge(), u.getEmail(), u.getPassword(), u.getRole());
         UserDetailsDTO fetchedUser = userService.findUserById(insertedID);
 
         assertEquals("Test Inserted Person", insertedUser, fetchedUser);
@@ -40,7 +40,7 @@ public class UserServiceIntegrationTests extends Ds2020TestConfig {
 
     @Test
     public void testInsertCorrectWithGetAll() {
-        UserDetailsDTO u = new UserDetailsDTO("John", "Somewhere Else street", 22, "email", "parola");
+        UserDetailsDTO u = new UserDetailsDTO("John", "Somewhere Else street", 22, "email", "parola", "role");
         userService.insert(u); //il inseram
 
         //era o persoana, acum sunt 2 deci vrem sa verificam asta

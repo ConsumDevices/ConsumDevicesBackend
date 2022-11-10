@@ -19,27 +19,31 @@ public class UserDetailsDTO {
     private String email;
     @NotNull
     private String password;
+    @NotNull
+    private String role;
 
     public UserDetailsDTO() {
     }
 
     //fara uuid
-    public UserDetailsDTO(String name, String address, int age, String email, String password) {
+    public UserDetailsDTO(String name, String address, int age, String email, String password, String role) {
         this.name = name;
         this.address = address;
         this.age = age;
         this.email = email;
         this.password = password;
+        this.role= role;
     }
 
     //cu uuid
-    public UserDetailsDTO(UUID id, String name, String address, int age, String email, String password) {
+    public UserDetailsDTO(UUID id, String name, String address, int age, String email, String password, String role) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.age = age;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     public UUID getId() {
@@ -90,6 +94,14 @@ public class UserDetailsDTO {
         this.password = password;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -99,11 +111,12 @@ public class UserDetailsDTO {
                 Objects.equals(name, that.name) &&
                 Objects.equals(address, that.address) &&
                 Objects.equals(email, that.email) &&
-                Objects.equals(password, that.password);
+                Objects.equals(password, that.password) &&
+                Objects.equals(role, that.role);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, address, age, email, password);
+        return Objects.hash(name, address, age, email, password, role);
     }
 }
