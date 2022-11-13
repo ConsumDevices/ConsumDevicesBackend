@@ -51,8 +51,16 @@ public class UserController {
     public ResponseEntity<String> getRole() {
         //lista de persoane dto, apeleaza o functie din service
         String userRole = userLogat.getRole();
-        System.out.println("Rolul actual: " + userRole);
+        //System.out.println("Rolul actual: " + userRole);
         return new ResponseEntity<>(gson.toJson(userRole), HttpStatus.OK);
+    }
+
+    @GetMapping(value="/name")
+    public ResponseEntity<String> getUserName() {
+        //lista de persoane dto, apeleaza o functie din service
+        String userName = userLogat.getName();
+        //System.out.println("Rolul actual: " + userRole);
+        return new ResponseEntity<>(gson.toJson(userName), HttpStatus.OK);
     }
 
     @GetMapping(value="/roleLogout")
