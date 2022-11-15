@@ -27,7 +27,7 @@ public class UserController {
 
     private final UserService userService;
     private static final Gson gson = new Gson();
-    private static UserDetailsDTO userLogat = new UserDetailsDTO();
+    public static UserDetailsDTO userLogat = new UserDetailsDTO();
 
     @Autowired
     public UserController(UserService userService) {
@@ -55,6 +55,16 @@ public class UserController {
         return new ResponseEntity<>(gson.toJson(userRole), HttpStatus.OK);
     }
 
+    /*
+    @GetMapping(value="/id")
+    public ResponseEntity<UUID> getId() {
+        //lista de persoane dto, apeleaza o functie din service
+        UUID userId = userLogat.getId();
+        System.out.println("Id actual: " + userId);
+        return new ResponseEntity<>(userId, HttpStatus.OK);
+    }
+     */
+
     @GetMapping(value="/name")
     public ResponseEntity<String> getUserName() {
         //lista de persoane dto, apeleaza o functie din service
@@ -80,6 +90,33 @@ public class UserController {
     @PostMapping()
     public ResponseEntity<UUID> insertUser(@Valid @RequestBody UserDetailsDTO userDTO) {
         UUID userID = userService.insert(userDTO);
+        return new ResponseEntity<>(userID, HttpStatus.CREATED);
+    }
+
+    @PostMapping(value="/update")
+    public ResponseEntity<UUID> updateUser(@Valid @RequestBody UserDetailsDTO userDTO) {
+
+        UserDetailsDTO userDetailsDTO = userService.findByName(userDTO.getName());
+        userDetailsDTO.setAge(userDTO.getAge());
+        userDetailsDTO.setAddress(userDTO.getAddress());
+        userDetailsDTO.setPassword(userDTO.getPassword());
+        userDetailsDTO.setRole(userDTO.getRole());
+        userDetailsDTO.setEmail(userDTO.getEmail());
+
+        //System.out.println("Controller " + userDetailsDTO.getId());
+
+        UUID userID = userService.update(userDetailsDTO);
+        return new ResponseEntity<>(userID, HttpStatus.CREATED);
+    }
+
+    @PostMapping(value="/delete")
+    public ResponseEntity<UUID> deleteUser(@Valid @RequestBody UserLoginDTO userDTO) {
+
+        UserDetailsDTO userDetailsDTO = userService.findByEmailAndPassword(userDTO.getEmail(), userDTO.getPassword());
+
+        //System.out.println("Controller " + userDetailsDTO.getId());
+
+        UUID userID = userService.delete(userDetailsDTO.getId());
         return new ResponseEntity<>(userID, HttpStatus.CREATED);
     }
 

@@ -12,7 +12,12 @@ import java.util.UUID;
 //interfata, in service implementam
 public interface DeviceRepository extends JpaRepository<Device, UUID> {
 
-    List<Device> findByName(String name);
+    Optional<Device> findByName(String name);
     List<Device> findByAddress(String address);
+
+    @Query(value = "SELECT d " +
+            "FROM Device d " +
+            "WHERE d.user.id = :id ")
+    List<Device> findAllForClient(@Param("id") UUID id);
 
 }

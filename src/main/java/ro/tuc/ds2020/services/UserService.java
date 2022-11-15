@@ -49,6 +49,31 @@ public class UserService {
         return user.getId();
     }
 
+    public UserDetailsDTO findByName(String name) {
+        Optional<User> userOptional = userRepository.findByName(name);
+        if (!userOptional.isPresent()) {
+            LOGGER.error("User with name {} was not found in db", name);
+            throw new ResourceNotFoundException(User.class.getSimpleName() + " with name: " + name);
+        }
+        return UserBuilder.toUserDetailsDTO(userOptional.get());
+    }
+
+    public UUID update(UserDetailsDTO userDTO) {
+        User user = UserBuilder.toUserEntityUpdate(userDTO);
+        System.out.println(user.getId());
+        user = userRepository.save(user);
+        LOGGER.debug("User with id {} was update in db", user.getId());
+        return user.getId();
+    }
+
+    public UUID delete(UUID userId) {
+        userRepository.deleteById(userId);
+        LOGGER.debug("User with id {} was deleted from db", userId);
+        return userId;
+    }
+
+
+
     public UserDetailsDTO findByEmailAndPassword(String email, String password)
     {
         Optional<User> userOptional = userRepository.findByEmailAndPassword(email, password);

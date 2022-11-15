@@ -17,10 +17,11 @@ public class User implements Serializable{
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Type(type = "uuid-binary")
+    //@Type(type = "uuid-binary")
+    @Type(type = "uuid-char")
     private UUID id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @Column(name = "address", nullable = false)
@@ -38,12 +39,23 @@ public class User implements Serializable{
     @Column(name = "role", nullable = false)
     private String role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Device> devices;
 
 
     public User() {
     }
+
+    public User(UUID id, String name, String address, int age, String email, String password, String role) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.age = age;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
 
     public User(String name, String address, int age, String email, String password, String role) {
         this.name = name;

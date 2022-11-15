@@ -16,7 +16,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      * Example: JPA generate Query by Field
      */
     //direct din denumire, si asa stie pentru ca e byName sa caute dupa nume
-    List<User> findByName(String name);
+    Optional<User> findByName(String name);
 
     //List<User> findByAge(int age);
 

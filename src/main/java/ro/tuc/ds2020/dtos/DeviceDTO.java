@@ -17,23 +17,26 @@ public class DeviceDTO extends RepresentationModel<DeviceDTO> {
     private String address;
     @NotNull
     private float maxHourlyConsumption;
+    private String username;
 
     public DeviceDTO() {
     }
 
-    public DeviceDTO(UUID id, String name, String description, String address, float maxHourlyConsumption){
+    public DeviceDTO(UUID id, String name, String description, String address, float maxHourlyConsumption, String username){
         this.id=id;
         this.name = name;
         this.description = description;
         this.address = address;
         this.maxHourlyConsumption = maxHourlyConsumption;
+        this.username = username;
     }
 
-    public DeviceDTO(String name, String description, String address, float maxHourlyConsumption){
+    public DeviceDTO(String name, String description, String address, float maxHourlyConsumption, String username){
         this.name = name;
         this.description = description;
         this.address = address;
         this.maxHourlyConsumption = maxHourlyConsumption;
+        this.username = username;
     }
 
     public UUID getId() {
@@ -76,6 +79,14 @@ public class DeviceDTO extends RepresentationModel<DeviceDTO> {
         this.maxHourlyConsumption = maxHourlyConsumption;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -85,11 +96,12 @@ public class DeviceDTO extends RepresentationModel<DeviceDTO> {
         return Float.compare(deviceDTO.maxHourlyConsumption, maxHourlyConsumption) == 0
                 && name.equals(deviceDTO.name)
                 && description.equals(deviceDTO.description)
-                && address.equals(deviceDTO.address);
+                && address.equals(deviceDTO.address)
+                && username.equals(deviceDTO.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, address, maxHourlyConsumption);
+        return Objects.hash(name, description, address, maxHourlyConsumption, username);
     }
 }

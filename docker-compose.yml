@@ -4,22 +4,22 @@ services:
 
   demo-db:
     image: containertema1tartamanuel30641.azurecr.io/db
-    healthcheck:
+    #healthcheck:
       #test: ["CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root"]
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      #test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       #
       #test: ["CMD", "mysqladmin", "-u$MYSQL_USER", "-p$MYSQL_PASSWORD",  "ping", "-h", "localhost"]
-      timeout: 45s
-      interval: 10s
-      retries: 5
+    #  timeout: 45s
+    #  interval: 10s
+    #  retries: 5
     restart: always
     environment:
       MYSQL_DATABASE: 'city-db'
-      MYSQL_USER: 'root'
-      MYSQL_PASSWORD: 'steaua2012'
-      #MYSQL_ROOT_PASSWORD: 'steaua2012'
+      #MYSQL_USER: 'root'
+      #MYSQL_PASSWORD: 'steaua2012'
+      MYSQL_ROOT_PASSWORD: 'steaua2012'
     ports:
-      - "3307:3307"
+      - "3306:3306"
     container_name: demo-db
 
   demo-be:
@@ -29,11 +29,11 @@ services:
       - "8080:8080"
     environment:
       #- DB_IP=172.22.0.2
-      - DB_IP=demo-db
-      - DB_PORT=3307
-      - DB_USER=root
-      - DB_PASSWORD=steaua2012
-      - DB_DBNAME=city-db
+      - MYSQL_IP=demo-db
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=steaua2012
+      - MYSQL_DBNAME=city-db
     depends_on:
-      demo-db:
-        condition: service_healthy
+      - demo-db
+        #condition: service_healthy

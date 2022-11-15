@@ -30,4 +30,14 @@ public class UserBuilder {
                 userDetailsDTO.getPassword(),
                 userDetailsDTO.getRole());
     }
+
+    public static User toUserEntityUpdate(UserDetailsDTO userDetailsDTO) {
+        return new User(userDetailsDTO.getId(),
+                userDetailsDTO.getName(),
+                userDetailsDTO.getAddress(),
+                userDetailsDTO.getAge(),
+                userDetailsDTO.getEmail(),
+                userDetailsDTO.getPassword(),
+                userDetailsDTO.getRole());
+    }
 }
