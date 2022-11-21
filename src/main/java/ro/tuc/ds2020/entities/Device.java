@@ -6,6 +6,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import javax.persistence.Entity;
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -35,6 +36,9 @@ public class Device implements Serializable{
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL)
+    private List<DeviceConsumption> devicesConsumption;
 
 
     public Device() {
@@ -104,5 +108,13 @@ public class Device implements Serializable{
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<DeviceConsumption> getDevicesConsumption() {
+        return devicesConsumption;
+    }
+
+    public void setDevicesConsumption(List<DeviceConsumption> devicesConsumption) {
+        this.devicesConsumption = devicesConsumption;
     }
 }

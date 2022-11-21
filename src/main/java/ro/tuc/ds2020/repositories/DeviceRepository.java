@@ -20,4 +20,9 @@ public interface DeviceRepository extends JpaRepository<Device, UUID> {
             "WHERE d.user.id = :id ")
     List<Device> findAllForClient(@Param("id") UUID id);
 
+    @Query(value = "SELECT d " +
+            "FROM Device d " +
+            "WHERE d.user.id = :id AND d.name = :name")
+    Optional<Device> findByNameAndUserID(@Param("name") String name, @Param("id") UUID id);
+
 }

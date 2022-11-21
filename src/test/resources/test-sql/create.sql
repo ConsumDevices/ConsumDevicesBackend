@@ -1,2 +1,2 @@
-INSERT INTO User (id, name, address, age, email, password, role) values
-    ('00201D1E61F3401588BF4292B86E22E4', 'My Name', 'My Address', 20, 'email@yahoo.com', 'Aabv-ads1', 'client');
+INSERT INTO User (id, address, age, email, name, password, role) values
+    ('1713a839-2a61-4d05-a750-8767cca0ad83', 'My Address', 20, 'email.email@yahoo.com', 'Bob Ion', 'Bobparol1-', 'client');

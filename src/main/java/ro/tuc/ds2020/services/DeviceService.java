@@ -115,4 +115,13 @@ public class DeviceService {
         return DeviceBuilder.toDeviceDTO(deviceOptional.get());
     }
 
+    public DeviceDTO findByNameAndUser(String name, UUID userId) {
+        Optional<Device> deviceOptional = deviceRepository.findByNameAndUserID(name, userId);
+        if (!deviceOptional.isPresent()) {
+            LOGGER.error("Device with name {} was not found in db", name);
+            throw new ResourceNotFoundException(Device.class.getSimpleName() + " with name: " + name);
+        }
+        return DeviceBuilder.toDeviceDTO(deviceOptional.get());
+    }
+
 }
