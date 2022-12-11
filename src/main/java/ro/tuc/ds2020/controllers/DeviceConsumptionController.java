@@ -4,15 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import ro.tuc.ds2020.dtos.DeviceConsumptionDTO;
 import ro.tuc.ds2020.dtos.DeviceDTO;
+import ro.tuc.ds2020.dtos.SensorValuesDTO;
 import ro.tuc.ds2020.dtos.UserDetailsDTO;
 import ro.tuc.ds2020.entities.Device;
 import ro.tuc.ds2020.services.DeviceConsumptionService;
 import ro.tuc.ds2020.services.DeviceService;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +32,8 @@ public class DeviceConsumptionController {
 
     private final DeviceConsumptionService deviceConsumptionService;
     private final DeviceService deviceService;
+
+    public static ArrayList<SensorValuesDTO> sensorValuesList = new ArrayList<>();
 
     @Autowired
     public DeviceConsumptionController(DeviceConsumptionService deviceConsumptionService, DeviceService deviceService) {
@@ -58,5 +65,82 @@ public class DeviceConsumptionController {
         DeviceDTO device = deviceService.findByNameAndUser(deviceName, userLogatID);
         List<DeviceConsumptionDTO> dtos = deviceConsumptionService.findByDeviceName(deviceName);
         return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
+    //@Scheduled(cron = "*/10 * * ? * *")
+    @Scheduled(cron = "0 * * * * *")
+    public void processSensorValues() {
+        //trimit din cealalta aplicatie o data la 10 secunde si aici primesc o data pe minut in loc
+        //sa trimit o data la 10 minute si sa primesc o data pe ora
+        for(SensorValuesDTO sensorValue : sensorValuesList)
+        {
+            System.out.println(sensorValue.toString());
+        }
+
+        //grupez datele in functie de timp, adica datele din 10 in 10 secunde le grupez la minutul anume
+        //trebuie sa fac sume la valorile din acelasi minut
+        if(sensorValuesList.size()>0)
+        {
+            LocalDateTime dataActuala = sensorValuesList.get(0).getDate().truncatedTo(ChronoUnit.MINUTES);
+            //System.out.println(dataActuala);
+            float suma = 0.0f;
+            UUID deviceIdActual = sensorValuesList.get(0).getDeviceId();
+            for(SensorValuesDTO sensorValue : sensorValuesList)
+            {
+                if(sensorValue.getDate().getMinute() == dataActuala.getMinute())
+                {
+                    suma = suma + sensorValue.getValue();
+                }
+                else
+                {
+                    //am terminat elementele din coada care trebuie grupate
+                    SensorValuesDTO sensorValueActual = new SensorValuesDTO();
+                    sensorValueActual.setValue(suma);
+                    sensorValueActual.setDate(dataActuala);
+                    sensorValueActual.setDeviceId(sensorValue.getDeviceId());
+                    deviceConsumptionService.insert(sensorValueActual);
+
+                    //aici fac si testarea daca s-a depasit limita
+                    DeviceDTO deviceActual = deviceService.findDeviceById(sensorValueActual.getDeviceId());
+                    float maxHourlyConsumption = deviceActual.getMaxHourlyConsumption();
+                    if(Float.compare(maxHourlyConsumption, sensorValueActual.getValue())<0)
+                    {
+                        //s-a depasit limita de consum per ora
+                        System.out.println("S-a depasit limita!!!" + " maxim:" + maxHourlyConsumption + " actual:" + sensorValueActual.getValue());
+                    }
+
+
+
+
+                    suma = sensorValue.getValue();
+                    dataActuala = sensorValue.getDate();
+                    deviceIdActual = sensorValue.getDeviceId();
+                    //System.out.println(dataActuala);
+
+                    //System.out.println(sensorValueActual.toString());
+
+                }
+            }
+            //cand ies din for trebuie sa fac ultimul insert
+            SensorValuesDTO sensorValueActual = new SensorValuesDTO();
+            sensorValueActual.setValue(suma);
+            sensorValueActual.setDate(dataActuala);
+            sensorValueActual.setDeviceId(deviceIdActual);
+            deviceConsumptionService.insert(sensorValueActual);
+
+            //System.out.println(sensorValueActual.toString());
+
+            //aici fac si testarea daca s-a depasit limita
+            DeviceDTO deviceActual = deviceService.findDeviceById(sensorValueActual.getDeviceId());
+            float maxHourlyConsumption = deviceActual.getMaxHourlyConsumption();
+            if(Float.compare(maxHourlyConsumption, sensorValueActual.getValue())<0)
+            {
+                //s-a depasit limita de consum per ora
+                System.out.println("S-a depasit limita!!!" + " maxim:" + maxHourlyConsumption + " actual:" + sensorValueActual.getValue());
+            }
+
+            sensorValuesList.clear();
+
+        }
     }
 }

@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 import ro.tuc.ds2020.controllers.handlers.exceptions.model.ResourceNotFoundException;
 import ro.tuc.ds2020.dtos.DeviceConsumptionDTO;
 import ro.tuc.ds2020.dtos.DeviceDTO;
+import ro.tuc.ds2020.dtos.SensorValuesDTO;
 import ro.tuc.ds2020.dtos.builders.DeviceBuilder;
 import ro.tuc.ds2020.dtos.builders.DeviceConsumptionBuilder;
 import ro.tuc.ds2020.entities.Device;
 import ro.tuc.ds2020.entities.DeviceConsumption;
+import ro.tuc.ds2020.entities.User;
 import ro.tuc.ds2020.repositories.DeviceConsumptionRepository;
 import ro.tuc.ds2020.repositories.DeviceRepository;
 
@@ -61,6 +63,22 @@ public class DeviceConsumptionService {
         return deviceList.stream()
                 .map(DeviceConsumptionBuilder::toDeviceConsumptionDTO)
                 .collect(Collectors.toList());
+    }
+
+    public UUID insert(SensorValuesDTO sensorValuesDTO) {
+
+        Optional<Device> deviceOptional = deviceRepository.findById(sensorValuesDTO.getDeviceId());
+        Device deviceFolosit = deviceOptional.get();
+        //System.out.println("Din service " + sensorValuesDTO.toString());
+        DeviceConsumptionDTO deviceConsumptionDTO = new DeviceConsumptionDTO((int) sensorValuesDTO.getValue(), sensorValuesDTO.getDate());
+
+        DeviceConsumption deviceConsumption = DeviceConsumptionBuilder.toDeviceConsumptionEntity(deviceConsumptionDTO, deviceFolosit);
+        //System.out.println(userDeAdaugat.getName());
+        //System.out.println("Din service celalalt DTO " + deviceConsumptionDTO.getDate() + " " + deviceConsumption.getDate());
+        deviceConsumption = deviceConsumptionRepository.save(deviceConsumption);
+        //System.out.println("Returnat " + deviceConsumption.getDate());
+        //LOGGER.debug("Device with id {} was inserted in db", device.getId());
+        return deviceConsumption.getId();
     }
 
 }
