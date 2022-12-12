@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import ro.tuc.ds2020.dtos.DeviceConsumptionDTO;
@@ -18,6 +19,7 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +36,9 @@ public class DeviceConsumptionController {
     private final DeviceService deviceService;
 
     public static ArrayList<SensorValuesDTO> sensorValuesList = new ArrayList<>();
+
+    @Autowired
+    SimpMessagingTemplate webSocketMessage;
 
     @Autowired
     public DeviceConsumptionController(DeviceConsumptionService deviceConsumptionService, DeviceService deviceService) {
@@ -64,8 +69,11 @@ public class DeviceConsumptionController {
         UUID userLogatID = UserController.userLogat.getId();
         DeviceDTO device = deviceService.findByNameAndUser(deviceName, userLogatID);
         List<DeviceConsumptionDTO> dtos = deviceConsumptionService.findByDeviceName(deviceName);
+        Collections.sort(dtos);
         return new ResponseEntity<>(dtos, HttpStatus.OK);
+
     }
+
 
     //@Scheduled(cron = "*/10 * * ? * *")
     @Scheduled(cron = "0 * * * * *")
@@ -105,8 +113,17 @@ public class DeviceConsumptionController {
                     float maxHourlyConsumption = deviceActual.getMaxHourlyConsumption();
                     if(Float.compare(maxHourlyConsumption, sensorValueActual.getValue())<0)
                     {
-                        //s-a depasit limita de consum per ora
-                        System.out.println("S-a depasit limita!!!" + " maxim:" + maxHourlyConsumption + " actual:" + sensorValueActual.getValue());
+                        //obtin lista device-urilor userului logat ca sa verific daca acest device este al lui
+                        List<DeviceDTO> dtos = deviceService.findDevicesClient(UserController.userLogat.getId());
+                        for(DeviceDTO device: dtos)
+                        {
+                            if(device.getId().equals(sensorValueActual.getDeviceId()))
+                            {
+                                //s-a depasit limita de consum per ora
+                                System.out.println("S-a depasit limita!!!" + " maxim:" + maxHourlyConsumption + " actual:" + sensorValueActual.getValue());
+                                webSocketMessage.convertAndSend("/wsnotification/message", sensorValueActual);
+                            }
+                        }
                     }
 
 
@@ -135,8 +152,17 @@ public class DeviceConsumptionController {
             float maxHourlyConsumption = deviceActual.getMaxHourlyConsumption();
             if(Float.compare(maxHourlyConsumption, sensorValueActual.getValue())<0)
             {
-                //s-a depasit limita de consum per ora
-                System.out.println("S-a depasit limita!!!" + " maxim:" + maxHourlyConsumption + " actual:" + sensorValueActual.getValue());
+                //obtin lista device-urilor userului logat ca sa verific daca acest device este al lui
+                List<DeviceDTO> dtos = deviceService.findDevicesClient(UserController.userLogat.getId());
+                for(DeviceDTO device: dtos)
+                {
+                    if(device.getId().equals(sensorValueActual.getDeviceId()))
+                    {
+                        //s-a depasit limita de consum per ora
+                        System.out.println("S-a depasit limita!!!" + " maxim:" + maxHourlyConsumption + " actual:" + sensorValueActual.getValue());
+                        webSocketMessage.convertAndSend("/wsnotification/message", sensorValueActual);
+                    }
+                }
             }
 
             sensorValuesList.clear();

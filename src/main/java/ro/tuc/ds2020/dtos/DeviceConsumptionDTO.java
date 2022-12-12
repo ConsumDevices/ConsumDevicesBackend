@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-public class DeviceConsumptionDTO extends RepresentationModel<DeviceConsumptionDTO> {
+public class DeviceConsumptionDTO extends RepresentationModel<DeviceConsumptionDTO> implements Comparable<DeviceConsumptionDTO> {
     private UUID id;
     @NotNull
     private int value;
@@ -72,5 +72,15 @@ public class DeviceConsumptionDTO extends RepresentationModel<DeviceConsumptionD
     @Override
     public int hashCode() {
         return Objects.hash(value, date);
+    }
+
+    @Override
+    public int compareTo(DeviceConsumptionDTO deviceConsumptionDTO) {
+        //daca una dintre ele e null, nu se pot compara, returneaz ca sunt egale
+        if (getDate() == null || deviceConsumptionDTO.getDate() == null) {
+            return 0;
+        }
+        //LocalDateTime deja are functia de compareTo
+        return getDate().compareTo(deviceConsumptionDTO.getDate());
     }
 }
