@@ -27,12 +27,12 @@ public class UserController {
 
     private final UserService userService;
     private static final Gson gson = new Gson();
-    public static UserDetailsDTO userLogat = new UserDetailsDTO();
+    //public static UserDetailsDTO userLogat = new UserDetailsDTO();
 
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
-        userLogat.setRole("nelogat");
+        //userLogat.setRole("nelogat");
     }
 
     @GetMapping()
@@ -47,13 +47,13 @@ public class UserController {
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
-    @GetMapping(value="/role")
-    public ResponseEntity<String> getRole() {
-        //lista de persoane dto, apeleaza o functie din service
-        String userRole = userLogat.getRole();
-        //System.out.println("Rolul actual: " + userRole);
-        return new ResponseEntity<>(gson.toJson(userRole), HttpStatus.OK);
-    }
+//    @GetMapping(value="/role")
+//    public ResponseEntity<String> getRole() {
+//        //lista de persoane dto, apeleaza o functie din service
+//        String userRole = userLogat.getRole();
+//        //System.out.println("Rolul actual: " + userRole);
+//        return new ResponseEntity<>(gson.toJson(userRole), HttpStatus.OK);
+//    }
 
     /*
     @GetMapping(value="/id")
@@ -65,26 +65,26 @@ public class UserController {
     }
      */
 
-    @GetMapping(value="/name")
-    public ResponseEntity<String> getUserName() {
-        //lista de persoane dto, apeleaza o functie din service
-        String userName = userLogat.getName();
-        //System.out.println("Rolul actual: " + userRole);
-        return new ResponseEntity<>(gson.toJson(userName), HttpStatus.OK);
-    }
+//    @GetMapping(value="/name")
+//    public ResponseEntity<String> getUserName() {
+//        //lista de persoane dto, apeleaza o functie din service
+//        String userName = userLogat.getName();
+//        //System.out.println("Rolul actual: " + userRole);
+//        return new ResponseEntity<>(gson.toJson(userName), HttpStatus.OK);
+//    }
 
-    @GetMapping(value="/roleLogout")
-    public ResponseEntity<String> getRoleLogout() {
-        //lista de persoane dto, apeleaza o functie din service
-        userLogat.setRole("neLogat");
-        userLogat.setName("Nelogat");
-        userLogat.setEmail("emailNelogat@email.com");
-        userLogat.setPassword("pasNel1-");
-        userLogat.setAddress("addressNelogat");
-        userLogat.setAge(99);
-        String userRole = userLogat.getRole();
-        return new ResponseEntity<>(gson.toJson(userRole), HttpStatus.OK);
-    }
+//    @GetMapping(value="/roleLogout")
+//    public ResponseEntity<String> getRoleLogout() {
+//        //lista de persoane dto, apeleaza o functie din service
+//        userLogat.setRole("neLogat");
+//        userLogat.setName("Nelogat");
+//        userLogat.setEmail("emailNelogat@email.com");
+//        userLogat.setPassword("pasNel1-");
+//        userLogat.setAddress("addressNelogat");
+//        userLogat.setAge(99);
+//        String userRole = userLogat.getRole();
+//        return new ResponseEntity<>(gson.toJson(userRole), HttpStatus.OK);
+//    }
 
     // primeste un personDTO, ii da insert, insert aparent ii returneaza UUID-ul
     @PostMapping()
@@ -121,13 +121,14 @@ public class UserController {
     }
 
     @PostMapping(value="/login")
-    public ResponseEntity<String> loginUser(@Valid @RequestBody UserLoginDTO userDTO) {
+    public ResponseEntity<UserDetailsDTO> loginUser(@Valid @RequestBody UserLoginDTO userDTO) {
         UserDetailsDTO userDetailsDTO = userService.findByEmailAndPassword(userDTO.getEmail(), userDTO.getPassword());
         String userRole = userDetailsDTO.getRole();
         System.out.println(userRole);
 
-        userLogat = userDetailsDTO;
-        return new ResponseEntity<>(gson.toJson(userRole), HttpStatus.CREATED);
+        //userLogat = userDetailsDTO;
+        //return new ResponseEntity<>(gson.toJson(userRole), HttpStatus.CREATED);
+        return new ResponseEntity<>(userDetailsDTO, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")

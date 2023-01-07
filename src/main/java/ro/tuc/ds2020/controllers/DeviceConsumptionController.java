@@ -63,10 +63,16 @@ public class DeviceConsumptionController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/deviceName/{deviceName}")
-    public ResponseEntity<List<DeviceConsumptionDTO>> getConsumptions(@PathVariable("deviceName") String deviceName) {
+    @GetMapping(value = "/deviceName/{deviceName}/{id}")
+    public ResponseEntity<List<DeviceConsumptionDTO>> getConsumptions(@PathVariable("deviceName") String deviceName, @PathVariable("id") UUID userId) {
         //UserDetailsDTO dto = userService.findUserById(userId);
-        UUID userLogatID = UserController.userLogat.getId();
+        //UUID userLogatID = UserController.userLogat.getId();
+
+        //si aici folosim din frontend, nu user logat
+        UUID userLogatID = userId;
+
+
+
         DeviceDTO device = deviceService.findByNameAndUser(deviceName, userLogatID);
         List<DeviceConsumptionDTO> dtos = deviceConsumptionService.findByDeviceName(deviceName);
         Collections.sort(dtos);
@@ -114,7 +120,14 @@ public class DeviceConsumptionController {
                     if(Float.compare(maxHourlyConsumption, sensorValueActual.getValue())<0)
                     {
                         //obtin lista device-urilor userului logat ca sa verific daca acest device este al lui
-                        List<DeviceDTO> dtos = deviceService.findDevicesClient(UserController.userLogat.getId());
+
+                        //List<DeviceDTO> dtos = deviceService.findDevicesClient(UserController.userLogat.getId());
+                        List<DeviceDTO> dtos = deviceService.findDevices();
+
+
+                        //aici din nou nu mai folosim user logat de aici, ci din frontend
+
+
                         for(DeviceDTO device: dtos)
                         {
                             if(device.getId().equals(sensorValueActual.getDeviceId()))
@@ -153,7 +166,13 @@ public class DeviceConsumptionController {
             if(Float.compare(maxHourlyConsumption, sensorValueActual.getValue())<0)
             {
                 //obtin lista device-urilor userului logat ca sa verific daca acest device este al lui
-                List<DeviceDTO> dtos = deviceService.findDevicesClient(UserController.userLogat.getId());
+                //List<DeviceDTO> dtos = deviceService.findDevicesClient(UserController.userLogat.getId());
+                List<DeviceDTO> dtos = deviceService.findDevices();
+
+
+                //aici din nou nu mai folosim user logat de aici, ci din frontend
+
+
                 for(DeviceDTO device: dtos)
                 {
                     if(device.getId().equals(sensorValueActual.getDeviceId()))

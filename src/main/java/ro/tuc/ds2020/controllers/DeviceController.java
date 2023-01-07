@@ -42,9 +42,13 @@ public class DeviceController {
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
-    @GetMapping(value="/clientD")
-    public ResponseEntity<List<DeviceDTO>> getDevicesClient() {
-        List<DeviceDTO> dtos = deviceService.findDevicesClient(UserController.userLogat.getId());
+    @GetMapping(value="/clientD/{id}")
+    public ResponseEntity<List<DeviceDTO>> getDevicesClient(@PathVariable("id") UUID userId) {
+        //List<DeviceDTO> dtos = deviceService.findDevicesClient(UserController.userLogat.getId());
+
+        //aici probabil trebuie sa folosim ceva din frontend, nu user logat
+        List<DeviceDTO> dtos = deviceService.findDevicesClient(userId);
+
         System.out.println(dtos.size());
         for (DeviceDTO dto : dtos) {
             Link deviceLink = linkTo(methodOn(DeviceController.class)
