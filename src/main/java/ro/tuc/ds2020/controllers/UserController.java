@@ -5,10 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import ro.tuc.ds2020.dtos.UserDTO;
-import ro.tuc.ds2020.dtos.UserDetailsDTO;
-import ro.tuc.ds2020.dtos.UserLoginDTO;
+import ro.tuc.ds2020.dtos.*;
 import ro.tuc.ds2020.services.UserService;
 
 import javax.validation.Valid;
@@ -30,10 +29,80 @@ public class UserController {
     //public static UserDetailsDTO userLogat = new UserDetailsDTO();
 
     @Autowired
+    SimpMessagingTemplate webSocketMessage;
+
+    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
         //userLogat.setRole("nelogat");
     }
+
+    //primim mesaj, ID client ca sa stim cine a trimis
+    @PostMapping(value="/messageClient")
+    public ResponseEntity<UUID> messageClient(@Valid @RequestBody ClientMessageDTO clientMessageDTO) {
+        System.out.println(clientMessageDTO.getMessage());
+        UserDetailsDTO userDto = userService.findUserById(clientMessageDTO.getClientID());
+        System.out.println("Client " + userDto.getId() + " " + userDto.getName());
+
+        webSocketMessage.convertAndSend("/messageToAdmin/message", clientMessageDTO);
+        return new ResponseEntity<>(userDto.getId(), HttpStatus.CREATED);
+    }
+
+    //primim mesaj, ID client ca sa stim pentru cine e mesajul
+    @PostMapping(value="/messageAdmin")
+    public ResponseEntity<UUID> messageAdmin(@Valid @RequestBody ClientMessageDTO clientMessageDTO) {
+        System.out.println(clientMessageDTO.getMessage());
+        UserDetailsDTO userDto = userService.findUserById(clientMessageDTO.getClientID());
+        System.out.println("Admin " + userDto.getId() + " " + userDto.getName());
+
+        webSocketMessage.convertAndSend("/messageToClient/message", clientMessageDTO);
+        return new ResponseEntity<>(userDto.getId(), HttpStatus.CREATED);
+    }
+
+    @PostMapping(value="/messageTypingAdmin")
+    public ResponseEntity<UUID> messageTypingAdmin(@Valid @RequestBody MessageTypingDTO messageTypingDTO) {
+        System.out.println(messageTypingDTO.getMessageTyping());
+        UserDetailsDTO userDto = userService.findUserById(messageTypingDTO.getClientID());
+        //System.out.println("Admin " + userDto.getId() + " " + userDto.getName());
+
+        webSocketMessage.convertAndSend("/typingFromAdmin/message", messageTypingDTO);
+        return new ResponseEntity<>(userDto.getId(), HttpStatus.CREATED);
+    }
+
+
+    @PostMapping(value="/messageTypingClient")
+    public ResponseEntity<UUID> messageTypingClient(@Valid @RequestBody MessageTypingDTO messageTypingDTO) {
+        System.out.println(messageTypingDTO.getMessageTyping());
+        UserDetailsDTO userDto = userService.findUserById(messageTypingDTO.getClientID());
+        //System.out.println("Admin " + userDto.getId() + " " + userDto.getName());
+
+        webSocketMessage.convertAndSend("/typingFromClient/message", messageTypingDTO);
+        return new ResponseEntity<>(userDto.getId(), HttpStatus.CREATED);
+    }
+
+
+    @PostMapping(value="/messageReadAdmin")
+    public ResponseEntity<UUID> messageReadAdmin(@Valid @RequestBody MessageReadDTO messageReadDTO) {
+        System.out.println(messageReadDTO.getMessageRead());
+        UserDetailsDTO userDto = userService.findUserById(messageReadDTO.getClientID());
+        //System.out.println("Admin " + userDto.getId() + " " + userDto.getName());
+
+        webSocketMessage.convertAndSend("/readFromAdmin/message", messageReadDTO);
+        return new ResponseEntity<>(userDto.getId(), HttpStatus.CREATED);
+    }
+
+
+    @PostMapping(value="/messageReadClient")
+    public ResponseEntity<UUID> messageReadClient(@Valid @RequestBody MessageReadDTO messageReadDTO) {
+        System.out.println(messageReadDTO.getMessageRead());
+        UserDetailsDTO userDto = userService.findUserById(messageReadDTO.getClientID());
+        //System.out.println("Admin " + userDto.getId() + " " + userDto.getName());
+
+        webSocketMessage.convertAndSend("/readFromClient/message", messageReadDTO);
+        return new ResponseEntity<>(userDto.getId(), HttpStatus.CREATED);
+    }
+
+
 
     @GetMapping()
     public ResponseEntity<List<UserDTO>> getUsers() {
